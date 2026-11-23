@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <!-- GATES:BEGIN
+             Quality gate thresholds and the only permitted exclusions. The factory seals this block.
+             Never change it to make a build pass. If a gate blocks you, stop and explain why. -->
+        <gate.coverage.line>1.00</gate.coverage.line>
+        <gate.coverage.branch>1.00</gate.coverage.branch>
+        <gate.coverage.instruction>1.00</gate.coverage.instruction>
+        <gate.coverage.exclude.main>**/Main.class</gate.coverage.exclude.main>
+        <gate.coverage.exclude.configuration>**/*Configuration.class</gate.coverage.exclude.configuration>
+        <gate.mutation.threshold>85</gate.mutation.threshold>
+        <gate.mutation.mutators>STRONGER</gate.mutation.mutators>
+        <gate.mutation.target-classes>{{package}}.*</gate.mutation.target-classes>
+        <gate.mutation.target-tests>{{package}}.*Test</gate.mutation.target-tests>
+        <gate.mutation.exclude.main>{{package}}.Main</gate.mutation.exclude.main>
+        <gate.mutation.exclude.configuration>*Configuration</gate.mutation.exclude.configuration>
+        <gate.mutation.exclude.integration-tests>*.IT*</gate.mutation.exclude.integration-tests>
+        <gate.mutation.full-matrix>true</gate.mutation.full-matrix>
+        <!-- GATES:END -->
+
+        <java.version>25</java.version>
+        <maven.compiler.release>25</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <archunit.version>1.5.1</archunit.version>
+        <jacoco.version>0.8.16</jacoco.version>
+        <pitest.version>1.30.2</pitest.version>
+        <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
+        <maven-enforcer-plugin.version>3.7.0</maven-enforcer-plugin.version>
+        <cyclonedx-maven-plugin.version>2.9.3</cyclonedx-maven-plugin.version>
+        <smt-random.version>1.8</smt-random.version>
+
+        <!-- Set by jacoco:prepare-agent. Empty default keeps surefire runnable when the agent is not attached. -->
+        <jacocoArgLine/>
+    </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.2</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>{{package}}</groupId>
+    <artifactId>{{name}}</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <name>{{name}}</name>
+
+    <!-- The factory's worker may change only the lines between the DEPENDENCIES markers: add or
+         remove dependencies there. Everything else in pom.xml, including the version properties,
+         needs a person. -->
+    <dependencies>
+        <!-- DEPENDENCIES:BEGIN -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.shiver-me-timbers</groupId>
+            <artifactId>smt-random</artifactId>
+            <version>${smt-random.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit</artifactId>
+            <version>${archunit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- DEPENDENCIES:END -->
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
+                </plugin>
+                <!-- Resolved dependency SBOM (target/bom.json) for the dependency scan. make scan runs makeBom. -->
+                <plugin>
+                    <groupId>org.cyclonedx</groupId>
+                    <artifactId>cyclonedx-maven-plugin</artifactId>
+                    <version>${cyclonedx-maven-plugin.version}</version>
+                    <configuration>
+                        <outputFormat>json</outputFormat>
+                        <outputName>bom</outputName>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-toolchain</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[25,26)</version>
+                                    <message>Build with JDK 25. Use the make targets, which select it.</message>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.9,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Unit tests (*Test). Only these count towards coverage. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{jacocoArgLine}</argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Integration tests (IT*). Not instrumented, so they never count towards coverage. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>${gate.coverage.exclude.main}</exclude>
+                        <exclude>${gate.coverage.exclude.configuration}</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>jacocoArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <haltOnFailure>true</haltOnFailure>
+                            <rules>
+                                <rule>
+                                    <element>CLASS</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${gate.coverage.line}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${gate.coverage.branch}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${gate.coverage.instruction}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Mutation tests. Not bound to a phase: make mutate runs mutationCoverage. -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>${pitest-junit5-plugin.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetClasses>
+                        <param>${gate.mutation.target-classes}</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>${gate.mutation.target-tests}</param>
+                    </targetTests>
+                    <excludedClasses>
+                        <param>${gate.mutation.exclude.main}</param>
+                        <param>${gate.mutation.exclude.configuration}</param>
+                    </excludedClasses>
+                    <excludedTestClasses>
+                        <param>${gate.mutation.exclude.integration-tests}</param>
+                    </excludedTestClasses>
+                    <mutators>
+                        <mutator>${gate.mutation.mutators}</mutator>
+                    </mutators>
+                    <mutationThreshold>${gate.mutation.threshold}</mutationThreshold>
+                    <failWhenNoMutations>true</failWhenNoMutations>
+                    <timestampedReports>false</timestampedReports>
+                    <fullMutationMatrix>${gate.mutation.full-matrix}</fullMutationMatrix>
+                    <outputFormats>
+                        <outputFormat>HTML</outputFormat>
+                        <outputFormat>XML</outputFormat>
+                    </outputFormats>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

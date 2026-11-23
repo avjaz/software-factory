@@ -1,0 +1,3 @@
+model: claude-opus-5-5
+maxAttempts: 3
+tailLines: 150

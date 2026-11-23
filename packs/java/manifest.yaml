@@ -1,0 +1,26 @@
+name: java
+sealed: # globs, relative to the repo root
+  - acceptance/**
+  - docs/tickets/**
+  - Makefile
+  - scripts/**
+  - .github/**
+  - pom.xml
+  - .factory.yaml
+  - CLAUDE.md
+  - CLAUDE.factory.md
+  - .claude/**
+  - mvnw
+  - mvnw.cmd
+  - .mvn/**
+network: # hosts the worker's sandbox may reach, besides the Anthropic API
+  - repo.maven.apache.org
+skeleton:
+  params:
+    - name: package
+      describe: Java package and Maven groupId of the app, e.g. com.example.demo
+      pattern: '^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$'
+      pathSeparator: '.'
+    - name: name
+      describe: Maven artifactId and app name, e.g. demo-app
+      pattern: '^[a-z][a-z0-9]*(-[a-z0-9]+)*$'

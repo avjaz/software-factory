@@ -1,0 +1,5 @@
+allowBuilds:
+  esbuild: false
+# 7 days, in minutes. Strict: fail instead of falling back to a younger version.
+minimumReleaseAge: 10080
+minimumReleaseAgeStrict: true

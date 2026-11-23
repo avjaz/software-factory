@@ -1,0 +1,6 @@
+pnpm-lock.yaml
+coverage/
+docs/
+.claude/
+packs/*/skills/
+packs/*/skeleton/

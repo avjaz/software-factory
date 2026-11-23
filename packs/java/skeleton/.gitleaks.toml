@@ -1,0 +1,11 @@
+# Default Gitleaks rules. Sealed with the gates: do not add allowlist entries for source paths.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Build output and installed packages"
+paths = [
+  '''(^|/)target/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)\.git/''',
+]

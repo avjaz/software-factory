@@ -1,0 +1,12 @@
+name: fake
+sealed:
+  - acceptance/**
+  - docs/tickets/**
+  - Makefile
+  - .factory.yaml
+network: []
+skeleton:
+  params:
+    - name: name
+      describe: Lowercase app name, e.g. greeter
+      pattern: '^[a-z]+$'
