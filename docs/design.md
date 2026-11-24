@@ -1,18 +1,18 @@
-# Software factory v2: design
+# Software factory: design
 
-**Status:** agreed 14 Nov 2026 in a grilling session. Supersedes the v1 factory (`../software-factory-deprecated/`) for everything below.
-**Repos named here:** the target repos this design and `docs/tickets/done/` refer to (the v1 factory, procurement-mcp, procurement-mcp-old, java-prototype, intake-demo, and their `../` paths) are private. They are kept as the record of how the factory was built.
+**Status:** agreed in a grilling session.
+**Repos named here:** the target repos this design and `docs/tickets/done/` refer to (procurement-mcp, procurement-mcp-old, java-prototype, intake-demo, and their `../` paths) are private. They are kept as the record of how the factory was built.
 **Scope:** v2.0, the smallest factory that delivers real feature tickets. Each section is referenced by number from `docs/tickets/`.
 
 ## 1. Purpose and scope
 
 The factory takes one pending ticket and its acceptance tests from a target repo. It has one Claude worker make those tests pass on a named branch, judges the result with the repo's own `make verify`, and commits on green. A person reviews and merges.
 
-v2.0 is done when an app is built from a pack skeleton (§6) through the factory alone: intake writes the tickets, the acceptance-test author writes their tests, and `factory next` delivers each one, with no human code edits. Met on 21 Nov 2026 by `intake-demo`, an NZ public holidays API (Java pack): four tickets, each green on the first attempt, $3.61 in total.
+v2.0 is done when an app is built from a pack skeleton (§6) through the factory alone: intake writes the tickets, the acceptance-test author writes their tests, and `factory next` delivers each one, with no human code edits. Met by `intake-demo`, an NZ public holidays API (Java pack): four tickets, each green on the first attempt, $3.61 in total.
 
 (procurement-mcp, the earlier v2.0 target, is shelved at its skeleton commit 73e7d69. The run loop's rework path, attempts 2 and 3, has not yet been exercised by a real run.)
 
-(Until 18 Nov 2026 the goal was slices 3, 6 and 5 of a hand-built procurement-mcp. That repo is kept at `../procurement-mcp-old`; procurement-mcp was restarted from the Java skeleton so the whole path from zero runs through the factory.)
+(Originally the goal was slices 3, 6 and 5 of a hand-built procurement-mcp. That repo is kept at `../procurement-mcp-old`; procurement-mcp was restarted from the Java skeleton so the whole path from zero runs through the factory.)
 
 Design rules:
 
@@ -105,7 +105,7 @@ Any other header key, invalid YAML or a missing section makes the ticket invalid
 
 Acceptance criteria are concrete examples: real seed values, real codes, one line per behaviour. A ticket is precise enough when a fresh agent can write its tests without guessing.
 
-The factory's own tickets (`software-factory2/docs/tickets/`) use this format too, without the acceptance files.
+The factory's own tickets (`software-factory/docs/tickets/`) use this format too, without the acceptance files.
 
 ## 6. Packs and the make contract
 
@@ -283,7 +283,7 @@ It never reads or writes Claude Code memory.
 
 Model router; stack-pack evidence modules; suppression scan; test audit; LLM reviewers; egress proxy and sandbox patches; open blocks in sealed files; running the whole queue; stacked branches; auto-merge; caching pre-flight; parallel workers; durable workflow engine; eval harness; deployment; container worker (§12.1). Each comes back only when a real run shows the need.
 
-### 12.1 Container worker (deferred 17 Nov 2026)
+### 12.1 Container worker (deferred)
 
 The option: run the worker in a container whose image the pack defines (JDK, build tool), instead of in Claude Code's native sandbox (§8.1). It would make the worker's toolchain independent of the host and isolate the worker's filesystem view to the worktree. Running `make verify` in the same image would also remove toolchain drift between worker and host.
 
@@ -301,7 +301,7 @@ Revisit when: the factory must run in CI, a pack's toolchain cannot reasonably b
 ## 13. Prep outside the factory
 
 - procurement-mcp started fresh from the Java skeleton (ticket 13): `factory init --pack java --skeleton --param package=nz.co.avjaz.mcp.procurement --param name=procurement-mcp`, committed by hand. Nothing else is prepared outside the factory.
-- Superseded 18 Nov 2026: the OAuth resource server (old slice 2) was to be built by hand, with a "call as alice / call as bob" acceptance helper. It is now the first factory ticket instead; its acceptance tests bring that helper. The migration of the old repo onto the Java pack (ticket 10) stays as the Java pack's proof, in `../procurement-mcp-old`.
+- Superseded: the OAuth resource server (old slice 2) was to be built by hand, with a "call as alice / call as bob" acceptance helper. It is now the first factory ticket instead; its acceptance tests bring that helper. The migration of the old repo onto the Java pack (ticket 10) stays as the Java pack's proof, in `../procurement-mcp-old`.
 
 ## 14. Build order
 
