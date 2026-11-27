@@ -1,7 +1,7 @@
 # Software factory: design
 
 **Status:** agreed in a grilling session.
-**Repos named here:** the target repos this design and `docs/tickets/done/` refer to (procurement-mcp, procurement-mcp-old, java-prototype, intake-demo, and their `../` paths) are private. java-prototype and intake-demo are kept as the record of how the factory was built. The procurement project was abandoned in Nov 2026 and both procurement repos, along with the v1 factory (`../software-factory-deprecated`), have been removed.
+**Repos named here:** the target repos this design and `docs/tickets/done/` refer to (procurement-mcp, procurement-mcp-old, java-prototype, intake-demo, and their `../` paths) are private. intake-demo is kept as the record of how the factory was built. The procurement project was abandoned in Nov 2026; both procurement repos, java-prototype and the v1 factory (`../software-factory-deprecated`) have been removed.
 **Scope:** v2.0, the smallest factory that delivers real feature tickets. Each section is referenced by number from `docs/tickets/`.
 
 ## 1. Purpose and scope
