@@ -1,7 +1,7 @@
 # Software factory: design
 
 **Status:** agreed in a grilling session.
-**Repos named here:** the target repos this design and `docs/tickets/done/` refer to (procurement-mcp, procurement-mcp-old, java-prototype, intake-demo, and their `../` paths) are private. They are kept as the record of how the factory was built.
+**Repos named here:** the target repos this design and `docs/tickets/done/` refer to (procurement-mcp, procurement-mcp-old, java-prototype, intake-demo, and their `../` paths) are private. java-prototype and intake-demo are kept as the record of how the factory was built. The procurement project was abandoned in Nov 2026 and both procurement repos, along with the v1 factory (`../software-factory-deprecated`), have been removed.
 **Scope:** v2.0, the smallest factory that delivers real feature tickets. Each section is referenced by number from `docs/tickets/`.
 
 ## 1. Purpose and scope
@@ -10,9 +10,9 @@ The factory takes one pending ticket and its acceptance tests from a target repo
 
 v2.0 is done when an app is built from a pack skeleton (§6) through the factory alone: intake writes the tickets, the acceptance-test author writes their tests, and `factory next` delivers each one, with no human code edits. Met by `intake-demo`, an NZ public holidays API (Java pack): four tickets, each green on the first attempt, $3.61 in total.
 
-(procurement-mcp, the earlier v2.0 target, is shelved at its skeleton commit 73e7d69. The run loop's rework path, attempts 2 and 3, has not yet been exercised by a real run.)
+(procurement-mcp, the earlier v2.0 target, was abandoned at its skeleton commit 73e7d69 and has since been removed. The run loop's rework path, attempts 2 and 3, has not yet been exercised by a real run.)
 
-(Originally the goal was slices 3, 6 and 5 of a hand-built procurement-mcp. That repo is kept at `../procurement-mcp-old`; procurement-mcp was restarted from the Java skeleton so the whole path from zero runs through the factory.)
+(Originally the goal was slices 3, 6 and 5 of a hand-built procurement-mcp. That repo was moved to `../procurement-mcp-old` (since removed); procurement-mcp was restarted from the Java skeleton so the whole path from zero runs through the factory.)
 
 Design rules:
 
@@ -301,7 +301,7 @@ Revisit when: the factory must run in CI, a pack's toolchain cannot reasonably b
 ## 13. Prep outside the factory
 
 - procurement-mcp started fresh from the Java skeleton (ticket 13): `factory init --pack java --skeleton --param package=nz.co.avjaz.mcp.procurement --param name=procurement-mcp`, committed by hand. Nothing else is prepared outside the factory.
-- Superseded: the OAuth resource server (old slice 2) was to be built by hand, with a "call as alice / call as bob" acceptance helper. It is now the first factory ticket instead; its acceptance tests bring that helper. The migration of the old repo onto the Java pack (ticket 10) stays as the Java pack's proof, in `../procurement-mcp-old`.
+- Superseded: the OAuth resource server (old slice 2) was to be built by hand, with a "call as alice / call as bob" acceptance helper. It is now the first factory ticket instead; its acceptance tests bring that helper. The migration of the old repo onto the Java pack (ticket 10) was the Java pack's proof, in `../procurement-mcp-old` (since removed).
 
 ## 14. Build order
 
